@@ -1,0 +1,546 @@
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+    <title>Just a Tip</title>
+	
+<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=true"></script>
+
+<script src="js/jquery-1.11.2.min.js"></script>
+<script src="js/jquery.mobile-1.4.5.min.js"></script>
+<script src="js/list.js"></script>
+<script src="js/number.js"></script>
+<script src="js/location.js"></script>
+<script src="js/calc.js"></script>
+<script>
+      var initialLocation;
+      
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition);
+        // also monitor position as it changes
+        navigator.geolocation.watchPosition(showPosition);
+      }
+      function getCity( options, complete ) {
+            
+          var geocoder = new google.maps.Geocoder(),
+              request;
+      
+          if( options.latitude ) {
+              
+              request= { 'latLng': new google.maps.LatLng( options.latitude, options.longitude ) };
+            
+          } else {
+              
+              request= { 'address': options.address };
+              
+          };
+          
+          geocoder.geocode( request, function( results, status ) {
+                  
+              if ( status == google.maps.GeocoderStatus.OK ) {
+                  
+                  console.log( results );
+                  
+                  //check top-level results
+                  for( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+                    
+                      var types = results[resultIndex].types;
+                      
+                      for( var typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+                      
+                          if( types[typeIndex] == 'locality' ) {
+                              
+                              complete( results[resultIndex].formatted_address );
+                              return;
+                              
+                          };
+                          
+                      };
+      
+                  };
+                  
+                  //no result, check addresses
+                  for( var resultIndex = 0; resultIndex < results.length; resultIndex++ ) {
+                    
+                      var addresses = results[resultIndex].address_components;
+                      
+                      for( var addressIndex = 0; addressIndex < addresses.length; addressIndex++ ) {
+                      
+                          var types = addresses[addressIndex].types;
+                          
+                          for( var typeIndex = 0; typeIndex < types.length; typeIndex++ ) {
+                          
+                              if( types[typeIndex] == 'locality' ) {
+                                  
+                                  complete( addresses[addressIndex].long_name );
+                                  return;
+                                  
+                              };
+                              
+                          };
+                          
+                      };
+                      
+                  };
+                  
+              } else {
+                  
+                  console.log( 'error: ' + status );
+                  complete();
+                  
+              };
+                  
+          });
+          
+      };
+      
+      function showPosition(position) {
+        
+        
+        var lat = position.coords.latitude;
+        var lng = position.coords.longitude;
+        
+        var latitude = lat,
+            longitude = lng;
+      
+          getCity( { latitude: latitude, longitude: longitude }, function ( city ) {
+          
+      	//document.getElementById( 'location' ).textContent = city;
+            $("#location").html(city);  
+          } );
+      }
+      </script>
+
+
+</head>
+
+<body>
+<div data-role="page" id="page1">
+
+    <header data-role="header">
+
+		<div  data-role="navbar">
+		
+			<ul>
+			
+				<li>
+					<a href="#page1"                 data-icon="home"   data-theme="b" 
+					                                 class = "ui-btn-active"  	       >Tip Calculator </a>
+				</li>
+			
+				<li>
+					<a href="#page2"                 data-icon="star"   data-theme="b" >Travel Tips</a>
+				</li>
+								
+				
+			</ul>
+			
+		</div>
+	</header>
+  <br />
+  <div>
+  <h1 align="center" id="location"> </h1>
+  </div>
+    <section data-role="content">
+<select name="select-choice-0" id="tester">
+   <option selected="selected">Select a service...</option>
+   <option>Hair Stylist/Barbers</option>
+   <option>Taxi Drivers</option>
+   <option>Waiter/Waitress</option>
+   <option>Massage Therapist</option>
+   <option>Manicurist/Pedicurist</option>
+   <option>Animal Groomer</option>
+   <option>Bartender</option>
+   <option>Bellhop</option>
+</select>
+
+<p id="bill">Enter the amount of the bill:</p>
+ <br>
+<div data-role="content" id="main">
+<input type="number" required id="num1" style="height:75px; font-size:xx-large" placeholder="$0.00">
+<br>
+<a data-role="button" id="CalcButt">Calculate</a>
+</div>
+
+<br>
+<br>
+ <div style="width:85%; float:left">
+ <p id="AboveAverage">Above Average(25%):</p>
+ <p id="Average">Average(20%):</p>
+ <p id="BelowAverage">Below Average(15%):</p>
+ </div>
+ <div style="width:15%; float:left">
+ <p id="25per"> </p>
+ <p id="20per"> </p>
+ <p id="15per"> </p>
+ </div>
+ <br>
+  <br> <br> <br> <br> <br> <br>
+
+   </section>
+ 	
+	
+</div>
+
+
+<div data-role="page" id="page2">
+
+		<div  data-role="navbar">
+		
+			<ul>
+			
+				<li>
+					<a href="#page1"    	data-icon="home"  data-theme="b" >Tip Calculator </a>
+				</li>
+			
+				<li>
+					<a href="#page2"    	data-icon="star"  data-theme="b" >Travel Tips</a>
+				</li>
+								
+				
+			</ul>
+		
+		</div>
+
+
+		<div data-role="content">	
+		    <section data-role="content">
+
+<select id="selectMe">
+  <option value="option1">Choose a destination...</option>
+  <option value="option2">United States</option>
+  <option value="option3">Germany</option>
+  <option value="option4">Brazil</option>
+</select>
+<div id="option1" class="group"></div>
+<div id="option2" class="group">
+While tipping is not mandatory in most of the United States, it is customary in many circumstances for service, especially at almost all sit-down restaurants which offer table service. 
+<br /><br />
+Tipping practices can vary depending upon the location in the U.S., and even published guidance can vary greatly depending upon the source.  For example, some Americans don't tip at a buffet restaurant, but it's generally good form to tip $1-2/person for wait staff just clearing several rounds of plates, to as much as 10 percent if the wait staff is refilling drinks and providing other services.  The general rule is to tip in proportion to the service, and the quality of service being delivered.
+<br /><br />
+Tip jars at carry-out restaurants are a recent innovation, and one resisted by many Americans.  While one guide below advises to tip 10 percent at carry-out restaurants, many Americans do not tip for carry-out, even when a tip jar is present, and tipping at most chain restaurants, such as McDonald's, is not common.  Some who do contribute to tip jars, put in change or only $1, depending upon the size of the order.
+<br /><br />
+Keep in mind that those who provide service are often dependent on tip income and generally are grateful for any tips received, especially when prompt and exceptional service has been provided.  Tipping is the means by which to acknolwedge good service.
+<br /><br />
+Many visitors to the U.S. feel pressured to tip even when they do not feel it is fair or reasonable to do so. Customers are REQUIRED to pay 'mandatory gratuities (tips)' if these are disclosed (on the menu or elsewhere) prior to being served.  Mandatory gratuities are charged by many restaurants when large groups (6 or more; sometimes, 8 or more) are being served.  Mandatory gratuities also are used by some restaurants with large numbers of foreign customers who may not be familiar with American tipping customs, often in tourist centers such as New York City.
+<br /><br />
+When 'mandatory tipping' is practiced. you may add more to the 'mandatory tip' if there is a desire to additionally reward some exceptional service.  Always examine your bill carefully to see if there is a mandatory gratuity included in the bill so that you don't accidentally add an additional gratuity to your payment.  If you feel your service was deficient, you can request a manager in order to have the mandatory gratuity adjusted downward.
+<br /><br />
+Fast food restaurants do not have tipping as there is no 'table service' (when a server brings your food to your table). 
+<br /><br />
+Some coffee shops, bakeries and other establishments have tip jars on their check-out counters.  These have become more prevalent in recent decades and there is some confusion, even controversy about them.  Generally, those who feel a desire to reward good service will make a contribution to a tip jar.  Others do not.  Both are fine.
+<br /><br />
+Tips are often a major source of compensation for wait staff and other U.S. service providers.  Employers often pay these employees lower wages in anticipation that tip income will provide a significant portion of the employees' income.  Customers should realize that they are not auotmatically paying 'more' (due to tipping).  In non-tipping countries, the tips are simply built into the price of the food.  An advantage to tipping, therefore, is the ability to tip whatever is appropriate: if the service is poor, a small tip should be left, signaling to the server that their service was subpar.
+<br /><br />
+Many hotel guests who tip housekeeping staff leave tips daily before leaving the hotel, both to reward the person immediately servicing the room and in expectation of good service.  
+<br /><br />
+<strong>Suggested tips:</strong>
+
+
+<table style="border: 1px solid #ecf4ca;" border="0" cellpadding="10" cellspacing="0">
+<tbody>
+<tr align="left" valign="top">
+<td class="table_text"  width="140">
+<p><strong>RESTAURANTS:</strong></p>
+</td>
+<td></td>
+<td class="table_text" width="283"><p><strong>SUGGESTED TIP</strong></p></td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text" align="left" valign="top">
+<div align="right">
+<p>Wait    service (sit down)</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>15-20%, pre-tax</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Wait service (buffet)</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>10%, pre-tax</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Host or Maitre d'</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>No obligation for greeting you and showing you to your table.<br /> $10-$20 for going above and beyond to find you a table on a busy night or on occasion, if you are a regular patron</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Take Out</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>No obligation<br /> 10% for extra service (curb delivery) or a large, complicated order</p>
+</td>
+</tr>
+<tr>
+<td align="right" valign="middle">Home Delivery</td>
+<td></td>
+<td>
+<p>10-15% of the bill, $2-5 for pizza delivery depending on the size of the order and difficulty of delivery&nbsp;</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Bartender</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>$1-2 per drink or 15-20% of the tab</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Tipping jars</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>No obligation<br /> Tip occasionally if your server or barista provides a little something extra or if you are a regular customer.</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Restroom Attendant</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>$0.50-$3, depending on the level of service</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Valet</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>$2-$5<br />Tip when the car is returned to you.</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<p><strong>TRAVEL:</strong></p>
+</td>
+<td></td>
+<td class="table_text" width="283"><p><strong>SUGGESTED TIP</strong></p></td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Skycap</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>$2 first bag, $1 per additional    bag</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Doorman</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>A smile and a "thanks" when he&nbsp; opens the door<br />$1-$4 for carrying luggage<br /> $1-$2 for hailing cab (add an extra $1 if it's raining)<br /> $1-$4 beyond the call of duty</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Bellhop</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>$2 first bag, $1 per additional    bag<br />$2-3 for each additional service, such as room delivery</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Housekeeper</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>$2-$5 per day, left daily with a note marked "Housekeeping - Thank you"</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Concierge</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>No obligation for answering questions<br />$5-10 for tickets or restaurant reservations<br />$15 for hard-to-get tickets or reservations, or 10-20% of the ticket price</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Taxi driver</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>15-20% of the fare, but minimally $1<br />$2 for the first bag, $1 for the second</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text" >
+<p><strong>SALON/SPA:</strong></p>
+</td>
+<td></td>
+<td class="table_text" width="283"><p><strong>SUGGESTED TIP</strong></p></td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Hair Salon</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>15-20%, ask to be split among those who served you</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Manicurist</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>15-20%</p>
+</td>
+</tr>
+<tr align="left" valign="top">
+<td class="table_text">
+<div align="right">
+<p>Facial, waxing, massage</p>
+</div>
+</td>
+<td></td>
+<td class="table_text">
+<p>15-20%</p>
+</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div id="option3" class="group">
+<strong>Tipping and Service in Restaurants, Bars, Clubs, etc.</strong>
+<br>
+<br>
+Service and VAT are included in the menu price in restaurants, bars, etc. all over Germany.  Still, it is typical to "round up" the amount to some more-or-less round figure. A rule of thumb is to add 5-10%, generally ending with a full Euro amount. 
+<br>
+<strong>Caveat:</strong>   it is not typical to be given a check, then leave your money on the table.  You have to tell the amount including tip you want to pay before you pay (via cash or credit card)
+<br><br>
+<strong>How You Pay:</strong> Typically, the waiter/waitress always comes to you and tells you your total. You then tell him/her how much you will pay, i.e. the amount you owe plus any "rounding up" -- for example, the waiter/waitress might say "&euro;7.60;"  you hand him/her a &euro;10 note and say "9 Euros."  S/he then will give you &euro;1 in change. 
+<br><br>
+Tipping in Germany and tipping in some other countries, such as the United States, are totally different. In Germany, waitresses are paid more and so the tips are smaller compared to the USA. Nevertheless, the 5-10% rule of  thumb still applies. If you want to tip less (according to some advice on the net) be prepared to appear stingy. <br><strong>Credit Cards:</strong> While Germany is a leader in many areas of technology, it is decidedly not so in credit card acceptance. When eating out, visiting any store or trying to pay for just about anything, don't be surprised if the response to your credit card is "Nein."  Most Germans still settle in cash or rely on debit cards called "EC" or "electronic cash" cards which are not logo-bearing and do not work like credit cards. While some hotels, restaurants and other venues will take credit cards, by far the majority does not. When shopping or consuming anything, it's always wise to ask in advance, otherwise you'll be expected to pay in cash. Personal checks are no longer used in Germany (having been replaced by EC cards), and Traveller's Checks often carry a substantial "service charge" for cashing them. 
+<br><br>
+<strong>Splitting a Check:</strong> This custom is not uncommon. Simply tell the waiter/waitress when paying what you are paying for, s/he will readily add up your amounts and present you with a personal total, which you should round up, as explained above. The waiter/ress is likely to come up at the end of the meal and ask "All together?" or, in German"Zusammen?"
+<br><br>
+<strong>Customs:</strong> It is seen as a sign of hospitality and good breeding to invite guests to a meal. Older Germans sometimes almost "fight" for the honor or privilege of settling the bill. Among younger Germans, most will easily and readily pay for themselves except in the case of a special occasion, where the host will customarily pay for everyone.
+<br><br>
+<strong>Food Service Etiquette Do's and Don'ts</strong>
+<br><br>
+<strong>Water, Ice Water:  Water is not free. If you order water you will be expected to pay for it as any other beverage ordered. It is not customary to serve or receive ice water upon arrival in any restaurant in Germany.</strong><br><br>  If you order water, you will be asked whether you wish still or carbonated mineral water. In some you may request tap water, but the practice is uncommon and seen as cheap, if not downright rude.  [In other places in Europe, like France, good drinkable tap water is available free in restaurants with no such negative impressions (eg:  un carafe d'eau).]
+<br><br>
+<strong>Beverage and portion sizes:</strong> Soft drinks generally are served in 0,2 and 0,3 L sizes. Beer is usually served in 0,3 (small) or 0,5 Liter sizes (large), although in some areas of Germany a 1-liter glass is "large" but not extraordinarily so. The vat-sized softdrink containers found in the U.S. are largely unknown here, as is the "free refill" or bottomless cup concept, except in the venues of many American fast food chains, which have introduced this concept in Germany; so if you are handed an empty cup with your food, this means you have free refill. Coffee will in some restaurants be served either by the cup or by K&auml;nnchen (small pot - usually about 2 cups) and is always accompanied by cream and sugar. The same holds true for hot tea (where lemon is also readily available and usually served alongside without asking). Cocoa is usually a third option readily available in this manner, and is also readily available for breakfast in most places, especially if you have children in your party.
+<br><br>
+<strong>Table/cover fees:</strong> Bread, butter, rolls, table settings sometimes are added to the bill as a separate cover charge. This is not fraud, but customary in some areas, just as it is sometimes customary for guests staying for a longer stay and enjoying half-board or full board to reuse their cloth napkins for several meals. Please be aware that service in restaurants especially with a multiple course menu is decidedly more slowly than in the United States.  It is not custom to leave your table for the digestiv.
+<br><br>
+<strong>Condiments:</strong> In some American fast food restaurants, (for example: McDonalds, Burger King, Wendy's) you must pay separately for ketchup and/or mayonnaise . Be aware that the menus at most fast food restaurants in Germany are not exactly the same as they are in the U.S. . You may also notice that a sandwich that you recognize from "back home" may taste a little different or may be smaller.
+<br><br>
+<strong>Seating/Non-Smoking Sections:</strong> The concept of a "host" or "hostess" is unknown in all but the most exclusive restaurants in Europe, where the Maitre d' will personally seat you. In most restaurants, just walk right in and pick the table of your choice. Please note that in most parts of Germany smoking is not allowed in public buildings and inside restaurants/cafes. However in some regions there might be socalled "Raucherclubs", i.e. small pubs etc. where smoking is still allowed but you have to become a member when entering.  The caveat applies: If you don't like the place, leave and go somewhere else. Making a "big stink" about smoking only brands you as a hapless tourist and does not endear you to anyone. Note also that in many restaurants it will be customary for you to allow perfect strangers to join you if you are seated at a table larger than your party; this holds particularly true in beer gardens and vineyard restaurants. Instead of objecting, look at the practice as an opportunity to get to know locals and/or make new friends - after all, isn't that what visiting a foreign country is all about?
+<br><br>
+<strong>Stammtisch:</strong>  Many smaller restaurants will have a table used by regulars from a company, a society etc. Such tables will usually have a "Stammtisch" label. You should not try to sit at such a table without checking with a waiter / waitress. 
+<br><br>
+<strong>Service:</strong> Unlike other countries, such as the USA, customer service is often not a high priority in Germany. Although Germans themselves are very friendly and hilfsbereit (helpful), people working in customer service roles can often be quite rude. Don't be personally offended if someone seems dismissive or unhelpful; it simply is not expected or demanded as much as it would be in places such as the United States. 
+</div>
+<div id="option4" class="group">
+<strong>TIPPING</strong>
+<br><br>
+Tipping in Brazil is typically not expected nor given. Usually, Brazilians only consider giving an extra if there was some special, nonstandard service. However, if you are a foreign guest with a good exchange rate and can easily afford to be generous, service people will be grateful.
+<br><br>
+At almost all restaurants and bars, a standard "servi&ccedil;o" service fee of 10% is included as a line item at the end of the "conta" or bill. This fee is not compulsory, even though it may seem so. However, most people do pay it unless there's a good reason not to (e.g. a very bad service or an absence of service - at places where you were not waited on). Although optional, some waiters may complain or may react negatively if you decide not to pay the 10% service fee.
+<br><br>
+<strong>Tipping at bars, pubs and nightclubs 
+</strong><br><br>
+The term "bar" in Brazil is not used a synonym for a nightclub or for a indoor property with music.  It's rather used to refer to restaurants where people usually have appetizers and drinks, and which are usually open to the public, with no bouncers or whatsoever.  In other words, a bar is a type of casual restaurant. At bars, the bartenders do not usually handle cash. In a bar or a restaurant, you ask the bartender for your bill, and he brings a total (usually with full details). You decide how you'll pay and then give the money, check or card. As most cards in Brazil are chip cards, the waiter or bartender will bring a card reader machine and will swipe the card in the presence of the client.
+<br><br>
+American-style indoor bars are usually known as "pubs" in Brazil, whereas nightclubs may be referred as "balada" (S&atilde;o Paulo) or "boate" (Portuguese version of the word boite, widely used in Rio de Janeiro).  At pubs and nightclubs, clients are carded by a bouncer or hostess and are usually given a card or a piece of paper, in which orders will be registered.  At the end of the client's stay, the card or the piece of paper has to be taken to a cashier inside the establishment, where the client will pay his or her bill, when a 10% service fee may be added to the finall sum. Therefore, bartenders don't handle cash and giving them tips directly is not common.  
+<br><br>
+<strong>Cab drivers: to tip or not?
+</strong><br><br>
+Make sure to understand the differences between a regular cab and a radio taxi.  Radio taxis are available at airports in major Brazilian cities and charge set prices which vary depending on the destination.  Therefore, taximeters are not used by radio taxi drivers.  Regular cabs are those which circulate around the city using taximeters.  They tend to be a second option at airports as well.  In Rio de Janeiro, radio taxis are booked inside the terminal, whereas regular cabs wait outside the arrivals area, lined up, waiting for clients to come. In either case, it's not usual to tip a cab diver.  
+<br><br>
+Common taxis (yellow in Rio de Janeiro and white in S&atilde;o Paulo) run on a taxi meter. Typically, if the total for the trip comes to say R$12.20 (i.e. a bit above R$12.00), people pay the amount round to the next whole number (in this case R$13.00) so that no one has to deal with coins. No other tip is required or expected. To/From the airport, a taxi may apply a R$3 per case charge on top of the fare. This happens occasionally and, supposedly, they have a right to ask for it.  However, if they apply this charge, they should definitely transfer your luggage out of the car for you.  There are also special or radio taxis. These typically quote prices for a trip and do not use a taxi meter. A tip should not be given in this case as you are already paying a higher price for these taxis.
+<br><br>
+<strong>Tipping at hotels 
+</strong><br><br>
+For most hotels, tip the bell hop if they transfer all of your luggage to/from the room. In this case a small tip (R$5 to R$10) is appreciated. The chamber maid should be tipped (about R$5+ per day) for good service, as she is integral to the enjoyment of your trip.
+<br><br>
+<strong>Tipping beach vendors
+</strong><br><br>
+Tip the person who rents you a chair and umbrella at the beach, and arranges your food and drinks, and stay with him during all your beach days. He will remember you with even better service the next time. In Rio de Janeiro, beach umbrellas and chairs are usually rented by vendors for a set price, so make sure to know which price you're being charged before renting those. 
+<br><br>
+<strong>Tipping organized tours 
+</strong><br><br>
+Organized tours (especially boat trips) also typically make a request of a tip by passing the hat at the end of the tour. It is up to the individual if and how much they wish to give to the crew.
+<br><br>
+<strong>ETIQUETTE
+</strong><br><br>
+Brazilians tend to be friendly and enjoy chatting very close to their friends or newly-met persons.  Kissing on the cheek is the customary greeting between women and between a man and a woman, even if they have just met.  Men greet by shaking their hands and/or by giving a sutil backslap. Frontal hugs are not common between men, unless if they are related or have been friends for a long time.  
+<br><br>
+Although Brazilians tend to make friends quickly, they can be easily offended by sincere opinions.  It's not common to bring polemical debates or opinions that may be offensive to one of the parties in a conversation.  Instead, Brazilians tend to talk about certain topics very carefully.  This said, although many Brazilians are critical of their own country, foreign visitors should avoid criticizing Brazil to locals and should also avoid adressing touchy domestic topics in a harsh manner (e.g. racial relations, social conditions, etc).  
+<br><br>
+When hosting someone, it's customary to open the door to your guest when he or she is leaving your place.  
+<br><br>
+The "OK" sign made with a hand widely used in the United States is an obcene sign in Brazil and should not be made.  
+<br><br>
+Brazilians don't tend to be punctual and when meeting friends, it's considered normal to be up to 15 minutes late.  Punctuality varies from region to region, but overall it's acceptable to be slightly late.
+<br><br>
+Unanswered e-mails, Facebook or SMS messages may be understood as a lack of interest and may, thus, offend Brazilians. 
+</div>
+		</div>
+	
+	</section>
+</div>
+
+
+</body>
+</html>
